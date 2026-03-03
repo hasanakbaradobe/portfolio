@@ -49,31 +49,40 @@ interface Testimonial {
 // --- Data ---
 const PROJECTS: Project[] = [
   {
-    title: "E-commerce Transformation",
-    client: "Luxury Boutique",
-    problem: "Outdated platform with 4-second load times and poor mobile conversion rates.",
-    solution: "Built a custom headless Shopify storefront using React and Node.js with optimized image delivery.",
-    result: "Load times dropped to 0.8s, and mobile conversion increased by 45% in the first quarter.",
-    tags: ["React", "Shopify", "Node.js", "Tailwind"],
-    image: "https://picsum.photos/seed/shop/800/600"
+    title: "LeadGEN SaaS Landing Page",
+    client: "Tech Startup",
+    problem: "Low conversion rate on their previous landing page and high cost-per-lead.",
+    solution: "Designed and developed a high-converting landing page with clear messaging and optimized CTAs.",
+    result: "Increased lead generation by 3x within the first 30 days of launch.",
+    tags: ["React", "Tailwind CSS", "Conversion Optimization"],
+    image: "https://image.thum.io/get/width/1200/crop/675/https://websitedemos.net/saas-landing-page-04/"
   },
   {
-    title: "SaaS Dashboard Redesign",
-    client: "FinTech Startup",
-    problem: "Users struggled to navigate complex financial data, leading to high support ticket volume.",
-    solution: "Implemented a clean, modular dashboard architecture with intuitive data visualization using D3.js.",
-    result: "Support tickets related to navigation dropped by 60%, and user engagement time increased by 30%.",
-    tags: ["TypeScript", "D3.js", "Dashboard", "UX Design"],
-    image: "https://picsum.photos/seed/fintech/800/600"
+    title: "Brikly Construction",
+    client: "Construction Company",
+    problem: "Outdated website that didn't reflect their 25+ years of excellence and quality.",
+    solution: "Built a modern, responsive corporate website highlighting their projects and services.",
+    result: "Improved brand perception and a 40% increase in online inquiries.",
+    tags: ["WordPress", "Corporate", "UI/UX Design"],
+    image: "https://image.thum.io/get/width/1200/crop/675/https://websitedemos.net/brikly-construction-company-04/"
   },
   {
-    title: "Corporate Identity Hub",
-    client: "Global Logistics Firm",
-    problem: "Fragmented web presence across different regions causing brand inconsistency.",
-    solution: "Developed a centralized WordPress multisite network with a custom-built, high-performance theme.",
-    result: "Unified brand voice across 12 regions and reduced maintenance costs by 40%.",
-    tags: ["WordPress", "PHP", "Multisite", "SEO"],
-    image: "https://picsum.photos/seed/logistics/800/600"
+    title: "Education Portal",
+    client: "Online Academy",
+    problem: "Students found it difficult to navigate courses and the platform was slow.",
+    solution: "Developed a fast, user-friendly LMS frontend with intuitive course discovery.",
+    result: "Student engagement increased by 50% and bounce rate dropped significantly.",
+    tags: ["Next.js", "LMS", "Education"],
+    image: "https://image.thum.io/get/width/1200/crop/675/https://websitedemos.net/online-courses-02/"
+  },
+  {
+    title: "Libero X250 E-Commerce",
+    client: "Electric Scooter Brand",
+    problem: "Needed a sleek, modern e-commerce store to launch their new flagship scooter.",
+    solution: "Created a visually striking product page with seamless checkout integration.",
+    result: "Achieved $50k in sales during the first week of product launch.",
+    tags: ["Shopify", "E-commerce", "Web Design"],
+    image: "https://image.thum.io/get/width/1200/crop/675/https://websitedemos.net/electric-scooter-04/"
   }
 ];
 
@@ -109,13 +118,13 @@ const TESTIMONIALS: Testimonial[] = [
     name: "Sarah Jenkins",
     company: "CEO, Bloom Digital",
     feedback: "Working with this developer was a game-changer for our agency. The attention to detail and technical expertise in custom WordPress development is unmatched. Our client was thrilled with the result.",
-    image: "https://picsum.photos/seed/sarah/100/100"
+    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=100&q=80"
   },
   {
     name: "Mark Thompson",
     company: "Founder, TechStream",
     feedback: "We needed a complex SaaS dashboard built quickly. Not only was it delivered on time, but the code quality was exceptional. A true professional who understands business goals as much as code.",
-    image: "https://picsum.photos/seed/mark/100/100"
+    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=100&q=80"
   }
 ];
 
@@ -144,7 +153,10 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Code2 className="w-8 h-8 text-emerald-500" />
-          <span className="text-xl font-bold tracking-tight">Hasan Akber</span>
+          <div className="flex flex-col">
+            <span className="text-xl font-bold tracking-tight leading-none">Hasan Akbar</span>
+            <span className="text-[10px] font-bold text-emerald-500 tracking-widest uppercase mt-1">Portfolio</span>
+          </div>
         </div>
         
         {/* Desktop Menu */}
@@ -223,6 +235,20 @@ const SectionHeading = ({ title, subtitle, centered = false }: { title: string, 
 );
 
 export default function App() {
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+
+  // Prevent scrolling when modal is open
+  React.useEffect(() => {
+    if (selectedProject) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedProject]);
+
   return (
     <div className="min-h-screen selection:bg-emerald-100 selection:text-emerald-900">
       <Navbar />
@@ -274,7 +300,7 @@ export default function App() {
           >
             <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-8 border-white">
               <img 
-                src="https://picsum.photos/seed/developer/800/1000" 
+                src="https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?auto=format&fit=crop&w=800&q=80" 
                 alt="Developer at work" 
                 className="w-full h-auto object-cover"
                 referrerPolicy="no-referrer"
@@ -336,12 +362,12 @@ export default function App() {
               className="grid grid-cols-2 gap-4"
             >
               <div className="space-y-4">
-                <img src="https://picsum.photos/seed/code1/400/500" className="rounded-2xl shadow-lg" alt="Code" referrerPolicy="no-referrer" />
-                <img src="https://picsum.photos/seed/code2/400/300" className="rounded-2xl shadow-lg" alt="Setup" referrerPolicy="no-referrer" />
+                <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=400&q=80" className="rounded-2xl shadow-lg" alt="Code" referrerPolicy="no-referrer" />
+                <img src="https://images.unsplash.com/photo-1555421689-491a97ff2040?auto=format&fit=crop&w=400&q=80" className="rounded-2xl shadow-lg" alt="Setup" referrerPolicy="no-referrer" />
               </div>
               <div className="space-y-4 pt-8">
-                <img src="https://picsum.photos/seed/code3/400/300" className="rounded-2xl shadow-lg" alt="Design" referrerPolicy="no-referrer" />
-                <img src="https://picsum.photos/seed/code4/400/500" className="rounded-2xl shadow-lg" alt="Coffee" referrerPolicy="no-referrer" />
+                <img src="https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?auto=format&fit=crop&w=400&q=80" className="rounded-2xl shadow-lg" alt="Design" referrerPolicy="no-referrer" />
+                <img src="https://images.unsplash.com/photo-1522542550221-31fd19575a2d?auto=format&fit=crop&w=400&q=80" className="rounded-2xl shadow-lg" alt="Workspace" referrerPolicy="no-referrer" />
               </div>
             </motion.div>
           </div>
@@ -451,14 +477,21 @@ export default function App() {
                 className={`grid md:grid-cols-2 gap-12 items-center ${idx % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}
               >
                 <div className={idx % 2 !== 0 ? 'md:order-2' : ''}>
-                  <div className="relative group overflow-hidden rounded-3xl shadow-2xl">
+                  <div 
+                    className="relative group overflow-hidden rounded-3xl shadow-2xl cursor-pointer"
+                    onClick={() => setSelectedProject(project)}
+                  >
                     <img 
                       src={project.image} 
                       alt={project.title} 
                       className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700"
                       referrerPolicy="no-referrer"
                     />
-                    <div className="absolute inset-0 bg-emerald-900/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="absolute inset-0 bg-emerald-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <span className="bg-white text-emerald-900 px-6 py-3 rounded-full font-bold flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-all shadow-xl">
+                        View Details <ArrowRight className="w-4 h-4" />
+                      </span>
+                    </div>
                   </div>
                 </div>
                 
@@ -489,7 +522,10 @@ export default function App() {
                     ))}
                   </div>
                   
-                  <button className="inline-flex items-center gap-2 text-emerald-600 font-bold hover:gap-4 transition-all">
+                  <button 
+                    onClick={() => setSelectedProject(project)}
+                    className="inline-flex items-center gap-2 text-emerald-600 font-bold hover:gap-4 transition-all"
+                  >
                     View Case Study <ExternalLink className="w-4 h-4" />
                   </button>
                 </div>
@@ -639,8 +675,97 @@ export default function App() {
       </section>
 
       <footer className="py-10 px-6 border-t border-slate-100 bg-white text-center text-sm text-slate-500">
-        <p>© {new Date().getFullYear()} Hasan Akber. Built with React & Tailwind CSS.</p>
+        <p>© {new Date().getFullYear()} Hasan Akbar. Built with React & Tailwind CSS.</p>
       </footer>
+
+      {/* Project Modal */}
+      <AnimatePresence>
+        {selectedProject && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-900/80 backdrop-blur-sm"
+            onClick={() => setSelectedProject(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-3xl overflow-hidden shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto flex flex-col"
+            >
+              <div className="relative shrink-0 bg-slate-900 flex flex-col justify-end">
+                <img 
+                  src={selectedProject.image} 
+                  alt={selectedProject.title} 
+                  className="w-full h-auto max-h-[60vh] object-contain" 
+                  referrerPolicy="no-referrer"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none" />
+                <button 
+                  onClick={() => setSelectedProject(null)}
+                  className="absolute top-4 right-4 w-10 h-10 bg-black/40 hover:bg-black/60 backdrop-blur-md rounded-full flex items-center justify-center text-white transition-colors z-10"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+                <div className="absolute bottom-6 left-6 right-6 md:bottom-10 md:left-10 md:right-10 text-white z-10">
+                  <div className="text-emerald-400 font-mono text-sm mb-2 font-bold tracking-wider uppercase drop-shadow-md">{selectedProject.client}</div>
+                  <h3 className="text-3xl md:text-5xl font-bold drop-shadow-lg">{selectedProject.title}</h3>
+                </div>
+              </div>
+              
+              <div className="p-6 md:p-10 grid md:grid-cols-3 gap-10">
+                <div className="md:col-span-2 space-y-8">
+                  <div>
+                    <h4 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-3 flex items-center gap-2">
+                      <Search className="w-4 h-4" /> The Challenge
+                    </h4>
+                    <p className="text-slate-600 leading-relaxed text-lg">{selectedProject.problem}</p>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-3 flex items-center gap-2">
+                      <Code2 className="w-4 h-4" /> The Solution
+                    </h4>
+                    <p className="text-slate-600 leading-relaxed text-lg">{selectedProject.solution}</p>
+                  </div>
+                  <div className="p-6 bg-emerald-50 rounded-2xl border border-emerald-100">
+                    <h4 className="text-sm font-bold uppercase tracking-widest text-emerald-600 mb-3 flex items-center gap-2">
+                      <Rocket className="w-4 h-4" /> The Result
+                    </h4>
+                    <p className="text-emerald-900 font-medium leading-relaxed text-lg">{selectedProject.result}</p>
+                  </div>
+                </div>
+                
+                <div className="space-y-8">
+                  <div>
+                    <h4 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-4">Tech Stack & Tools</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedProject.tags.map((tag, idx) => (
+                        <span key={idx} className="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl text-sm font-bold border border-slate-200">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="p-6 rounded-2xl bg-slate-900 text-white">
+                    <h4 className="font-bold mb-2">Want a similar result?</h4>
+                    <p className="text-slate-400 text-sm mb-4">Let's discuss how we can transform your digital presence.</p>
+                    <a 
+                      href="#contact" 
+                      onClick={() => setSelectedProject(null)}
+                      className="block text-center bg-emerald-500 text-white px-6 py-3 rounded-xl text-sm font-bold hover:bg-emerald-600 transition-all"
+                    >
+                      Start a Project
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
