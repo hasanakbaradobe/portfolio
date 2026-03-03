@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'motion/react';
+import { motion, AnimatePresence, useScroll, useMotionValueEvent, useMotionValue, useSpring, useTransform } from 'motion/react';
 import { 
   Code2, 
   Layout, 
@@ -21,7 +21,13 @@ import {
   ShieldCheck,
   Sun,
   Moon,
-  ArrowUp
+  ArrowUp,
+  Database,
+  Server,
+  Monitor,
+  Layers,
+  MousePointer2,
+  Paintbrush
 } from 'lucide-react';
 
 // --- Types ---
@@ -298,6 +304,235 @@ const ScrollToTop = () => {
   );
 };
 
+const FloatingIcons = () => {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const springConfig = { damping: 25, stiffness: 150 };
+  const smoothX = useSpring(mouseX, springConfig);
+  const smoothY = useSpring(mouseY, springConfig);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    mouseX.set(x);
+    mouseY.set(y);
+  };
+
+  const handleMouseLeave = () => {
+    mouseX.set(0);
+    mouseY.set(0);
+  };
+
+  const icons = [
+    { Icon: Code2, size: 'w-16 h-16', x: '15%', y: '25%', delay: 0, mult: 1.5 },
+    { Icon: Layout, size: 'w-20 h-20', x: '65%', y: '15%', delay: 0.2, mult: -1.2 },
+    { Icon: Smartphone, size: 'w-14 h-14', x: '80%', y: '65%', delay: 0.4, mult: 0.8 },
+    { Icon: Globe, size: 'w-24 h-24', x: '20%', y: '70%', delay: 0.1, mult: -1.5 },
+    { Icon: Database, size: 'w-16 h-16', x: '55%', y: '45%', delay: 0.5, mult: 2 },
+    { Icon: Server, size: 'w-12 h-12', x: '35%', y: '50%', delay: 0.3, mult: -0.5 },
+    { Icon: Monitor, size: 'w-18 h-18', x: '60%', y: '80%', delay: 0.6, mult: 1.1 },
+    { Icon: Layers, size: 'w-14 h-14', x: '40%', y: '15%', delay: 0.7, mult: -0.9 },
+  ];
+
+  return (
+    <div 
+      className="relative w-full aspect-square bg-slate-50 dark:bg-slate-900/50 rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-xl flex items-center justify-center group"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
+      {/* Subtle grid background */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+      
+      {/* Central glowing element */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/5 via-transparent to-emerald-500/5 opacity-50 group-hover:opacity-100 transition-opacity duration-700" />
+      
+      <motion.div 
+        className="relative z-10 w-32 h-32 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-full shadow-2xl flex items-center justify-center border border-slate-200/50 dark:border-slate-700/50"
+        style={{
+          x: useTransform(smoothX, x => x * 30),
+          y: useTransform(smoothY, y => y * 30),
+        }}
+      >
+        <Code2 className="w-12 h-12 text-slate-800 dark:text-slate-200" />
+      </motion.div>
+
+      {/* Floating icons */}
+      {icons.map((item, i) => (
+        <motion.div
+          key={i}
+          className="absolute z-20"
+          style={{
+            left: item.x,
+            top: item.y,
+            x: useTransform(smoothX, x => x * 80 * item.mult),
+            y: useTransform(smoothY, y => y * 80 * item.mult),
+          }}
+        >
+          <motion.div
+            animate={{ y: [0, -10, 0] }}
+            transition={{ duration: 4 + i * 0.5, repeat: Infinity, ease: "easeInOut", delay: item.delay }}
+            className={`${item.size} bg-white/40 dark:bg-slate-800/40 text-slate-600 dark:text-slate-400 rounded-2xl backdrop-blur-md border border-white/40 dark:border-slate-700/40 flex items-center justify-center shadow-lg transition-colors duration-300 hover:bg-white/80 dark:hover:bg-slate-700/80 hover:text-indigo-500 dark:hover:text-indigo-400 cursor-pointer`}
+          >
+            <item.Icon className="w-1/2 h-1/2 opacity-70" />
+          </motion.div>
+        </motion.div>
+      ))}
+    </div>
+  );
+};
+
+const FadeIn = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 30 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, margin: "-100px" }}
+    transition={{ duration: 0.8, delay, ease: [0.21, 0.47, 0.32, 0.98] }}
+    className={className}
+  >
+    {children}
+  </motion.div>
+);
+
+const WebsiteBuildingAnimation = () => {
+  return (
+    <div className="relative w-full aspect-square bg-slate-50 dark:bg-slate-800/50 rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-2xl flex items-center justify-center p-4 sm:p-8">
+      {/* Browser Window */}
+      <motion.div 
+        className="w-full h-full bg-white dark:bg-slate-900 rounded-xl shadow-lg overflow-hidden flex flex-col border border-slate-200 dark:border-slate-700 relative z-10"
+        initial={{ y: 20, opacity: 0 }}
+        whileInView={{ y: 0, opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+      >
+        {/* Browser Header */}
+        <div className="h-8 bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex items-center px-3 gap-1.5">
+          <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
+          <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+          <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+        </div>
+        
+        {/* Browser Content */}
+        <div className="flex-1 p-4 flex flex-col gap-4 relative">
+          {/* Header */}
+          <div className="flex justify-between items-center">
+            <motion.div 
+              className="h-6 w-24 bg-slate-200 dark:bg-slate-700 rounded-md"
+              animate={{ 
+                backgroundColor: ["#e2e8f0", "#10b981", "#10b981", "#e2e8f0"],
+                width: ["6rem", "6rem", "8rem", "6rem"]
+              }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <div className="flex gap-2">
+              {[1, 2, 3].map((i) => (
+                <motion.div 
+                  key={i}
+                  className="h-2 w-8 bg-slate-200 dark:bg-slate-700 rounded-full"
+                  animate={{ opacity: [0.3, 1, 1, 0.3] }}
+                  transition={{ duration: 6, repeat: Infinity, delay: i * 0.2 }}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Hero Section */}
+          <motion.div 
+            className="w-full h-32 bg-slate-100 dark:bg-slate-800 rounded-lg relative overflow-hidden"
+            animate={{ 
+              backgroundColor: ["#f1f5f9", "#ecfdf5", "#ecfdf5", "#f1f5f9"]
+            }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <motion.div 
+              className="absolute inset-0 bg-gradient-to-r from-emerald-400/20 to-blue-400/20"
+              initial={{ x: "-100%" }}
+              animate={{ x: ["-100%", "0%", "0%", "-100%"] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+              <motion.div 
+                className="h-4 w-3/4 bg-slate-300 dark:bg-slate-600 rounded-full"
+                animate={{ width: ["0%", "75%", "75%", "0%"] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              />
+              <motion.div 
+                className="h-2 w-1/2 bg-slate-200 dark:bg-slate-700 rounded-full"
+                animate={{ width: ["0%", "50%", "50%", "0%"] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
+              />
+            </div>
+          </motion.div>
+
+          {/* Grid Section */}
+          <div className="grid grid-cols-3 gap-3 flex-1">
+            {[1, 2, 3].map((i) => (
+              <motion.div 
+                key={i}
+                className="bg-slate-100 dark:bg-slate-800 rounded-lg p-2 flex flex-col gap-2 relative overflow-hidden"
+                animate={{ 
+                  y: [10, 0, 0, 10],
+                  opacity: [0, 1, 1, 0]
+                }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 0.4 + i * 0.1 }}
+              >
+                <motion.div 
+                  className="w-full h-12 bg-slate-200 dark:bg-slate-700 rounded-md"
+                  animate={{ backgroundColor: ["#e2e8f0", "#a7f3d0", "#a7f3d0", "#e2e8f0"] }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 0.8 + i * 0.1 }}
+                />
+                <div className="h-2 w-full bg-slate-200 dark:bg-slate-700 rounded-full" />
+                <div className="h-2 w-2/3 bg-slate-200 dark:bg-slate-700 rounded-full" />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Floating Elements */}
+      <motion.div
+        className="absolute -right-2 sm:-right-6 top-1/4 bg-white dark:bg-slate-800 p-3 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700 flex items-center gap-2 z-20"
+        animate={{ 
+          y: [0, -10, 0],
+          opacity: [0, 1, 1, 0],
+          scale: [0.8, 1, 1, 0.8]
+        }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
+      >
+        <Code2 className="w-5 h-5 text-emerald-500" />
+        <div className="h-2 w-12 bg-slate-200 dark:bg-slate-700 rounded-full hidden sm:block" />
+      </motion.div>
+
+      <motion.div
+        className="absolute -left-2 sm:-left-6 bottom-1/4 bg-white dark:bg-slate-800 p-3 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700 flex items-center gap-2 z-20"
+        animate={{ 
+          y: [0, 10, 0],
+          opacity: [0, 1, 1, 0],
+          scale: [0.8, 1, 1, 0.8]
+        }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 2.5 }}
+      >
+        <Paintbrush className="w-5 h-5 text-blue-500" />
+        <div className="h-2 w-12 bg-slate-200 dark:bg-slate-700 rounded-full hidden sm:block" />
+      </motion.div>
+      
+      {/* Cursor Animation */}
+      <motion.div
+        className="absolute z-30 text-slate-800 dark:text-white drop-shadow-lg"
+        animate={{
+          x: [150, 0, -80, 150],
+          y: [150, 40, 120, 150],
+          scale: [1, 0.9, 1, 1]
+        }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <MousePointer2 className="w-8 h-8 fill-current" />
+      </motion.div>
+    </div>
+  );
+};
+
 export default function App() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
@@ -325,11 +560,7 @@ export default function App() {
         </div>
 
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-          >
+          <FadeIn>
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-sm font-bold mb-6 border border-emerald-100 dark:border-emerald-500/20">
               <Rocket className="w-4 h-4" />
               Available for new projects
@@ -354,22 +585,13 @@ export default function App() {
                 View Projects
               </a>
             </div>
-          </motion.div>
+          </FadeIn>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+          <FadeIn
+            delay={0.2}
             className="relative hidden md:block"
           >
-            <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-8 border-white dark:border-slate-800">
-              <img 
-                src="https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?auto=format&fit=crop&w=800&q=80" 
-                alt="Developer at work" 
-                className="w-full h-auto object-cover"
-                referrerPolicy="no-referrer"
-              />
-            </div>
+            <FloatingIcons />
             <div className="absolute -bottom-6 -left-6 bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-xl z-20 border border-slate-100 dark:border-slate-700">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-500/20 rounded-full flex items-center justify-center">
@@ -381,7 +603,7 @@ export default function App() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </FadeIn>
         </div>
       </section>
 
@@ -389,11 +611,7 @@ export default function App() {
       <section id="about" className="section-padding bg-white dark:bg-slate-900">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
+            <FadeIn>
               <SectionHeading 
                 title="Building the Web, One Pixel at a Time." 
                 subtitle="I am a freelance web developer with over 7 years of experience in creating bespoke digital solutions for clients worldwide."
@@ -417,23 +635,11 @@ export default function App() {
                   <div className="text-sm font-medium text-slate-500 dark:text-slate-400">Years Experience</div>
                 </div>
               </div>
-            </motion.div>
+            </FadeIn>
 
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              className="grid grid-cols-2 gap-4"
-            >
-              <div className="space-y-4">
-                <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=400&q=80" className="rounded-2xl shadow-lg" alt="Code" referrerPolicy="no-referrer" />
-                <img src="https://images.unsplash.com/photo-1555421689-491a97ff2040?auto=format&fit=crop&w=400&q=80" className="rounded-2xl shadow-lg" alt="Setup" referrerPolicy="no-referrer" />
-              </div>
-              <div className="space-y-4 pt-8">
-                <img src="https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?auto=format&fit=crop&w=400&q=80" className="rounded-2xl shadow-lg" alt="Design" referrerPolicy="no-referrer" />
-                <img src="https://images.unsplash.com/photo-1522542550221-31fd19575a2d?auto=format&fit=crop&w=400&q=80" className="rounded-2xl shadow-lg" alt="Workspace" referrerPolicy="no-referrer" />
-              </div>
-            </motion.div>
+            <FadeIn delay={0.2} className="flex items-center justify-center">
+              <WebsiteBuildingAnimation />
+            </FadeIn>
           </div>
         </div>
       </section>
@@ -450,12 +656,9 @@ export default function App() {
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {SERVICES.map((service, idx) => (
-              <motion.div
+              <FadeIn
                 key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
+                delay={idx * 0.1}
                 className="bg-white dark:bg-white p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-100 hover:shadow-xl transition-all group"
               >
                 <div className="mb-6 p-3 bg-emerald-50 dark:bg-emerald-50 rounded-2xl inline-block group-hover:scale-110 transition-transform">
@@ -473,7 +676,7 @@ export default function App() {
                     </li>
                   ))}
                 </ul>
-              </motion.div>
+              </FadeIn>
             ))}
           </div>
         </div>
@@ -485,7 +688,7 @@ export default function App() {
         
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div>
+            <FadeIn>
               <h2 className="text-4xl md:text-5xl font-bold mb-8">Technical Expertise</h2>
               <p className="text-slate-400 text-lg mb-12 max-w-lg">
                 I stay at the forefront of technology to ensure your project is built with the most efficient and future-proof stack available.
@@ -505,9 +708,9 @@ export default function App() {
                   </div>
                 ))}
               </div>
-            </div>
+            </FadeIn>
             
-            <div className="grid grid-cols-2 gap-6">
+            <FadeIn delay={0.2} className="grid grid-cols-2 gap-6">
               {[
                 { icon: <ShieldCheck className="w-10 h-10" />, label: "Security First" },
                 { icon: <Zap className="w-10 h-10" />, label: "Performance" },
@@ -519,7 +722,7 @@ export default function App() {
                   <div className="font-bold">{item.label}</div>
                 </div>
               ))}
-            </div>
+            </FadeIn>
           </div>
         </div>
       </section>
@@ -534,11 +737,8 @@ export default function App() {
           
           <div className="space-y-24">
             {PROJECTS.map((project, idx) => (
-              <motion.div 
+              <FadeIn 
                 key={idx}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
                 className={`grid md:grid-cols-2 gap-12 items-center ${idx % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}
               >
                 <div className={idx % 2 !== 0 ? 'md:order-2' : ''}>
@@ -594,7 +794,7 @@ export default function App() {
                     View Case Study <ExternalLink className="w-4 h-4" />
                   </button>
                 </div>
-              </motion.div>
+              </FadeIn>
             ))}
           </div>
         </div>
@@ -613,12 +813,9 @@ export default function App() {
             <div className="hidden md:block absolute top-1/2 left-0 right-0 h-0.5 bg-slate-200 dark:bg-slate-800 -z-10" />
             
             {PROCESS.map((step, idx) => (
-              <motion.div
+              <FadeIn
                 key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
+                delay={idx * 0.1}
                 className="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 relative"
               >
                 <div className="absolute -top-6 left-8 w-12 h-12 bg-emerald-500 text-white rounded-2xl flex items-center justify-center font-bold text-xl shadow-lg shadow-emerald-500/30">
@@ -628,7 +825,7 @@ export default function App() {
                 <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
                   {step.desc}
                 </p>
-              </motion.div>
+              </FadeIn>
             ))}
           </div>
         </div>
@@ -645,11 +842,9 @@ export default function App() {
           
           <div className="grid md:grid-cols-2 gap-8">
             {TESTIMONIALS.map((testimonial, idx) => (
-              <motion.div
+              <FadeIn
                 key={idx}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
+                delay={idx * 0.1}
                 className="p-10 rounded-3xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 relative"
               >
                 <div className="text-emerald-500 mb-6">
@@ -672,7 +867,7 @@ export default function App() {
                     <div className="text-sm text-slate-500 dark:text-slate-400">{testimonial.company}</div>
                   </div>
                 </div>
-              </motion.div>
+              </FadeIn>
             ))}
           </div>
         </div>
@@ -683,11 +878,7 @@ export default function App() {
         <div className="absolute bottom-0 left-0 w-full h-1/2 bg-emerald-500/10 blur-3xl -z-10" />
         
         <div className="max-w-7xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
+          <FadeIn>
             <h2 className="text-5xl md:text-6xl font-bold mb-8">Ready to Start Your <span className="text-emerald-500">Next Project?</span></h2>
             <p className="text-xl text-slate-400 mb-12 max-w-2xl mx-auto">
               Whether you need a custom WordPress developer or a full-scale business website development partner, I'm here to help you succeed.
@@ -722,7 +913,7 @@ export default function App() {
                 </a>
               </div>
             </div>
-          </motion.div>
+          </FadeIn>
         </div>
       </section>
 
