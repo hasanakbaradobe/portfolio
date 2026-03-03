@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'motion/react';
 import { 
   Code2, 
   Layout, 
@@ -18,7 +18,10 @@ import {
   Search,
   Rocket,
   Zap,
-  ShieldCheck
+  ShieldCheck,
+  Sun,
+  Moon,
+  ArrowUp
 } from 'lucide-react';
 
 // --- Types ---
@@ -147,6 +150,15 @@ const PROCESS = [
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  React.useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 glass-card">
@@ -154,7 +166,7 @@ const Navbar = () => {
         <div className="flex items-center gap-2">
           <Code2 className="w-8 h-8 text-emerald-500" />
           <div className="flex flex-col">
-            <span className="text-xl font-bold tracking-tight leading-none">Hasan Akbar</span>
+            <span className="text-xl font-bold tracking-tight leading-none dark:text-white">Hasan Akbar</span>
             <span className="text-[10px] font-bold text-emerald-500 tracking-widest uppercase mt-1">Portfolio</span>
           </div>
         </div>
@@ -165,11 +177,18 @@ const Navbar = () => {
             <a 
               key={item} 
               href={`#${item.toLowerCase()}`} 
-              className="text-sm font-medium text-slate-600 hover:text-emerald-500 transition-colors"
+              className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors"
             >
               {item}
             </a>
           ))}
+          <button 
+            onClick={() => setIsDarkMode(!isDarkMode)}
+            className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-300"
+            aria-label="Toggle Dark Mode"
+          >
+            {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </button>
           <a 
             href="#contact" 
             className="bg-emerald-500 text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-emerald-600 transition-all shadow-md hover:shadow-lg"
@@ -179,9 +198,17 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Toggle */}
-        <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
-          {isOpen ? <X /> : <Menu />}
-        </button>
+        <div className="flex items-center gap-4 md:hidden">
+          <button 
+            onClick={() => setIsDarkMode(!isDarkMode)}
+            className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-300"
+          >
+            {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </button>
+          <button className="text-slate-900 dark:text-white" onClick={() => setIsOpen(!isOpen)}>
+            {isOpen ? <X /> : <Menu />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
@@ -191,14 +218,14 @@ const Navbar = () => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="md:hidden absolute top-20 left-0 right-0 bg-white border-t border-slate-100 p-6 flex flex-col gap-4 shadow-xl"
+            className="md:hidden absolute top-20 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 p-6 flex flex-col gap-4 shadow-xl"
           >
             {["Services", "About", "Portfolio", "Process", "Contact"].map((item) => (
               <a 
                 key={item} 
                 href={`#${item.toLowerCase()}`} 
                 onClick={() => setIsOpen(false)}
-                className="text-lg font-medium text-slate-600"
+                className="text-lg font-medium text-slate-600 dark:text-slate-300"
               >
                 {item}
               </a>
@@ -210,13 +237,13 @@ const Navbar = () => {
   );
 };
 
-const SectionHeading = ({ title, subtitle, centered = false }: { title: string, subtitle?: string, centered?: boolean }) => (
+const SectionHeading = ({ title, subtitle, centered = false, forceLight = false }: { title: string, subtitle?: string, centered?: boolean, forceLight?: boolean }) => (
   <div className={`mb-16 ${centered ? 'text-center' : ''}`}>
     <motion.h2 
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="text-4xl md:text-5xl font-bold mb-4"
+      className={`text-4xl md:text-5xl font-bold mb-4 ${forceLight ? 'text-slate-900 dark:text-slate-900' : 'dark:text-white'}`}
     >
       {title}
     </motion.h2>
@@ -226,13 +253,50 @@ const SectionHeading = ({ title, subtitle, centered = false }: { title: string, 
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ delay: 0.1 }}
-        className="text-lg text-slate-500 max-w-2xl mx-auto"
+        className={`text-lg max-w-2xl mx-auto ${forceLight ? 'text-slate-500 dark:text-slate-500' : 'text-slate-500 dark:text-slate-400'}`}
       >
         {subtitle}
       </motion.p>
     )}
   </div>
 );
+
+const ScrollToTop = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const { scrollY } = useScroll();
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    if (latest > 400) {
+      setIsVisible(true);
+    } else {
+      setIsVisible(false);
+    }
+  });
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
+  return (
+    <AnimatePresence>
+      {isVisible && (
+        <motion.button
+          initial={{ opacity: 0, scale: 0.8, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.8, y: 20 }}
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 z-50 p-3 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+          aria-label="Scroll to top"
+        >
+          <ArrowUp className="w-6 h-6" />
+        </motion.button>
+      )}
+    </AnimatePresence>
+  );
+};
 
 export default function App() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -266,14 +330,14 @@ export default function App() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 text-emerald-600 text-sm font-bold mb-6 border border-emerald-100">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-sm font-bold mb-6 border border-emerald-100 dark:border-emerald-500/20">
               <Rocket className="w-4 h-4" />
               Available for new projects
             </div>
-            <h1 className="text-6xl md:text-7xl font-bold leading-[1.1] mb-6">
+            <h1 className="text-6xl md:text-7xl font-bold leading-[1.1] mb-6 dark:text-white">
               Crafting <span className="text-emerald-500">High-Performance</span> Digital Experiences.
             </h1>
-            <p className="text-xl text-slate-600 mb-10 leading-relaxed max-w-lg">
+            <p className="text-xl text-slate-600 dark:text-slate-300 mb-10 leading-relaxed max-w-lg">
               I help businesses and startups build scalable, custom website development solutions that drive real growth and user engagement.
             </p>
             <div className="flex flex-wrap gap-4">
@@ -285,7 +349,7 @@ export default function App() {
               </a>
               <a 
                 href="#portfolio" 
-                className="bg-white text-slate-900 border border-slate-200 px-8 py-4 rounded-full text-lg font-bold hover:bg-slate-50 transition-all"
+                className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 px-8 py-4 rounded-full text-lg font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-all"
               >
                 View Projects
               </a>
@@ -298,7 +362,7 @@ export default function App() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="relative hidden md:block"
           >
-            <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-8 border-white">
+            <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-8 border-white dark:border-slate-800">
               <img 
                 src="https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?auto=format&fit=crop&w=800&q=80" 
                 alt="Developer at work" 
@@ -306,14 +370,14 @@ export default function App() {
                 referrerPolicy="no-referrer"
               />
             </div>
-            <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl z-20 border border-slate-100">
+            <div className="absolute -bottom-6 -left-6 bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-xl z-20 border border-slate-100 dark:border-slate-700">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
+                <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-500/20 rounded-full flex items-center justify-center">
                   <CheckCircle2 className="w-6 h-6 text-emerald-500" />
                 </div>
                 <div>
-                  <div className="text-2xl font-bold">100%</div>
-                  <div className="text-xs text-slate-500 uppercase tracking-wider font-bold">Client Satisfaction</div>
+                  <div className="text-2xl font-bold dark:text-white">100%</div>
+                  <div className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">Client Satisfaction</div>
                 </div>
               </div>
             </div>
@@ -322,7 +386,7 @@ export default function App() {
       </section>
 
       {/* 2. About Me */}
-      <section id="about" className="section-padding bg-white">
+      <section id="about" className="section-padding bg-white dark:bg-slate-900">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <motion.div
@@ -334,7 +398,7 @@ export default function App() {
                 title="Building the Web, One Pixel at a Time." 
                 subtitle="I am a freelance web developer with over 7 years of experience in creating bespoke digital solutions for clients worldwide."
               />
-              <div className="space-y-6 text-slate-600 leading-relaxed">
+              <div className="space-y-6 text-slate-600 dark:text-slate-300 leading-relaxed">
                 <p>
                   My journey started with a passion for problem-solving and a deep curiosity about how things work under the hood. Today, I specialize in <strong>custom website development</strong> and <strong>WordPress development</strong>, helping brands bridge the gap between their vision and their digital reality.
                 </p>
@@ -344,13 +408,13 @@ export default function App() {
               </div>
               
               <div className="mt-10 grid grid-cols-2 gap-6">
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
                   <div className="text-3xl font-bold text-emerald-500 mb-1">50+</div>
-                  <div className="text-sm font-medium text-slate-500">Projects Completed</div>
+                  <div className="text-sm font-medium text-slate-500 dark:text-slate-400">Projects Completed</div>
                 </div>
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
                   <div className="text-3xl font-bold text-emerald-500 mb-1">7+</div>
-                  <div className="text-sm font-medium text-slate-500">Years Experience</div>
+                  <div className="text-sm font-medium text-slate-500 dark:text-slate-400">Years Experience</div>
                 </div>
               </div>
             </motion.div>
@@ -381,6 +445,7 @@ export default function App() {
             centered 
             title="Specialized Services" 
             subtitle="I offer a range of website development services designed to help your business stand out in a crowded digital landscape."
+            forceLight
           />
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -391,19 +456,19 @@ export default function App() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1 }}
-                className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-xl transition-all group"
+                className="bg-white dark:bg-white p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-100 hover:shadow-xl transition-all group"
               >
-                <div className="mb-6 p-3 bg-emerald-50 rounded-2xl inline-block group-hover:scale-110 transition-transform">
+                <div className="mb-6 p-3 bg-emerald-50 dark:bg-emerald-50 rounded-2xl inline-block group-hover:scale-110 transition-transform">
                   {service.icon}
                 </div>
-                <h3 className="text-xl font-bold mb-4">{service.title}</h3>
-                <p className="text-slate-500 text-sm mb-6 leading-relaxed">
+                <h3 className="text-xl font-bold mb-4 text-slate-900 dark:text-slate-900">{service.title}</h3>
+                <p className="text-slate-500 dark:text-slate-500 text-sm mb-6 leading-relaxed">
                   {service.description}
                 </p>
                 <ul className="space-y-3">
                   {service.benefits.map((benefit, bIdx) => (
-                    <li key={bIdx} className="flex items-start gap-2 text-xs font-medium text-slate-600">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <li key={bIdx} className="flex items-start gap-2 text-xs font-medium text-slate-600 dark:text-slate-600">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-500 shrink-0" />
                       {benefit}
                     </li>
                   ))}
@@ -460,7 +525,7 @@ export default function App() {
       </section>
 
       {/* 5. Portfolio */}
-      <section id="portfolio" className="section-padding bg-white">
+      <section id="portfolio" className="section-padding bg-white dark:bg-slate-900">
         <div className="max-w-7xl mx-auto">
           <SectionHeading 
             title="Featured Projects" 
@@ -488,7 +553,7 @@ export default function App() {
                       referrerPolicy="no-referrer"
                     />
                     <div className="absolute inset-0 bg-emerald-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <span className="bg-white text-emerald-900 px-6 py-3 rounded-full font-bold flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-all shadow-xl">
+                      <span className="bg-white dark:bg-slate-800 text-emerald-900 dark:text-emerald-400 px-6 py-3 rounded-full font-bold flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-all shadow-xl">
                         View Details <ArrowRight className="w-4 h-4" />
                       </span>
                     </div>
@@ -497,26 +562,26 @@ export default function App() {
                 
                 <div className={idx % 2 !== 0 ? 'md:order-1' : ''}>
                   <div className="text-emerald-500 font-mono text-sm mb-2">{project.client}</div>
-                  <h3 className="text-3xl font-bold mb-6">{project.title}</h3>
+                  <h3 className="text-3xl font-bold mb-6 dark:text-white">{project.title}</h3>
                   
                   <div className="space-y-6 mb-8">
                     <div>
                       <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">The Problem</h4>
-                      <p className="text-slate-600">{project.problem}</p>
+                      <p className="text-slate-600 dark:text-slate-300">{project.problem}</p>
                     </div>
                     <div>
                       <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">The Solution</h4>
-                      <p className="text-slate-600">{project.solution}</p>
+                      <p className="text-slate-600 dark:text-slate-300">{project.solution}</p>
                     </div>
-                    <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
-                      <h4 className="text-xs font-bold uppercase tracking-widest text-emerald-600 mb-2">The Result</h4>
-                      <p className="text-emerald-900 font-medium">{project.result}</p>
+                    <div className="p-4 bg-emerald-50 dark:bg-emerald-500/10 rounded-2xl border border-emerald-100 dark:border-emerald-500/20">
+                      <h4 className="text-xs font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-2">The Result</h4>
+                      <p className="text-emerald-900 dark:text-emerald-300 font-medium">{project.result}</p>
                     </div>
                   </div>
                   
                   <div className="flex flex-wrap gap-2 mb-8">
                     {project.tags.map((tag, tIdx) => (
-                      <span key={tIdx} className="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-bold">
+                      <span key={tIdx} className="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-full text-xs font-bold">
                         {tag}
                       </span>
                     ))}
@@ -524,7 +589,7 @@ export default function App() {
                   
                   <button 
                     onClick={() => setSelectedProject(project)}
-                    className="inline-flex items-center gap-2 text-emerald-600 font-bold hover:gap-4 transition-all"
+                    className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold hover:gap-4 transition-all"
                   >
                     View Case Study <ExternalLink className="w-4 h-4" />
                   </button>
@@ -536,7 +601,7 @@ export default function App() {
       </section>
 
       {/* 6. Work Process */}
-      <section id="process" className="section-padding bg-slate-50">
+      <section id="process" className="section-padding bg-slate-50 dark:bg-slate-900/50">
         <div className="max-w-7xl mx-auto">
           <SectionHeading 
             centered 
@@ -545,7 +610,7 @@ export default function App() {
           />
           
           <div className="grid md:grid-cols-3 gap-12 relative">
-            <div className="hidden md:block absolute top-1/2 left-0 right-0 h-0.5 bg-slate-200 -z-10" />
+            <div className="hidden md:block absolute top-1/2 left-0 right-0 h-0.5 bg-slate-200 dark:bg-slate-800 -z-10" />
             
             {PROCESS.map((step, idx) => (
               <motion.div
@@ -554,13 +619,13 @@ export default function App() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1 }}
-                className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 relative"
+                className="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 relative"
               >
                 <div className="absolute -top-6 left-8 w-12 h-12 bg-emerald-500 text-white rounded-2xl flex items-center justify-center font-bold text-xl shadow-lg shadow-emerald-500/30">
                   {idx + 1}
                 </div>
-                <h4 className="text-xl font-bold mb-4 mt-4">{step.title}</h4>
-                <p className="text-slate-500 text-sm leading-relaxed">
+                <h4 className="text-xl font-bold mb-4 mt-4 dark:text-white">{step.title}</h4>
+                <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
                   {step.desc}
                 </p>
               </motion.div>
@@ -570,7 +635,7 @@ export default function App() {
       </section>
 
       {/* 7. Testimonials */}
-      <section className="section-padding bg-white">
+      <section className="section-padding bg-white dark:bg-slate-900">
         <div className="max-w-7xl mx-auto">
           <SectionHeading 
             centered 
@@ -585,26 +650,26 @@ export default function App() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                className="p-10 rounded-3xl bg-slate-50 border border-slate-100 relative"
+                className="p-10 rounded-3xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 relative"
               >
                 <div className="text-emerald-500 mb-6">
                   {[...Array(5)].map((_, i) => (
                     <span key={i} className="text-2xl">★</span>
                   ))}
                 </div>
-                <p className="text-lg text-slate-700 italic mb-8 leading-relaxed">
+                <p className="text-lg text-slate-700 dark:text-slate-300 italic mb-8 leading-relaxed">
                   "{testimonial.feedback}"
                 </p>
                 <div className="flex items-center gap-4">
                   <img 
                     src={testimonial.image} 
                     alt={testimonial.name} 
-                    className="w-14 h-14 rounded-full object-cover border-2 border-white shadow-md"
+                    className="w-14 h-14 rounded-full object-cover border-2 border-white dark:border-slate-700 shadow-md"
                     referrerPolicy="no-referrer"
                   />
                   <div>
-                    <div className="font-bold text-slate-900">{testimonial.name}</div>
-                    <div className="text-sm text-slate-500">{testimonial.company}</div>
+                    <div className="font-bold text-slate-900 dark:text-white">{testimonial.name}</div>
+                    <div className="text-sm text-slate-500 dark:text-slate-400">{testimonial.company}</div>
                   </div>
                 </div>
               </motion.div>
@@ -657,26 +722,15 @@ export default function App() {
                 </a>
               </div>
             </div>
-            
-            <div className="mt-16 flex justify-center gap-8">
-              <a href="#" className="text-slate-400 hover:text-white transition-colors flex items-center gap-2">
-                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
-                  <Github className="w-5 h-5" />
-                </div>
-              </a>
-              <a href="#" className="text-slate-400 hover:text-white transition-colors flex items-center gap-2">
-                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
-                  <Linkedin className="w-5 h-5" />
-                </div>
-              </a>
-            </div>
           </motion.div>
         </div>
       </section>
 
-      <footer className="py-10 px-6 border-t border-slate-100 bg-white text-center text-sm text-slate-500">
-        <p>© {new Date().getFullYear()} Hasan Akbar. Built with React & Tailwind CSS.</p>
+      <footer className="py-10 px-6 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 text-center text-sm text-slate-500 dark:text-slate-400">
+        <p>© {new Date().getFullYear()} Hasan Akbar.</p>
       </footer>
+
+      <ScrollToTop />
 
       {/* Project Modal */}
       <AnimatePresence>
@@ -693,7 +747,7 @@ export default function App() {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-3xl overflow-hidden shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto flex flex-col"
+              className="bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto flex flex-col"
             >
               <div className="relative shrink-0 bg-slate-900 flex flex-col justify-end">
                 <img 
@@ -721,19 +775,19 @@ export default function App() {
                     <h4 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-3 flex items-center gap-2">
                       <Search className="w-4 h-4" /> The Challenge
                     </h4>
-                    <p className="text-slate-600 leading-relaxed text-lg">{selectedProject.problem}</p>
+                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-lg">{selectedProject.problem}</p>
                   </div>
                   <div>
                     <h4 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-3 flex items-center gap-2">
                       <Code2 className="w-4 h-4" /> The Solution
                     </h4>
-                    <p className="text-slate-600 leading-relaxed text-lg">{selectedProject.solution}</p>
+                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-lg">{selectedProject.solution}</p>
                   </div>
-                  <div className="p-6 bg-emerald-50 rounded-2xl border border-emerald-100">
-                    <h4 className="text-sm font-bold uppercase tracking-widest text-emerald-600 mb-3 flex items-center gap-2">
+                  <div className="p-6 bg-emerald-50 dark:bg-emerald-500/10 rounded-2xl border border-emerald-100 dark:border-emerald-500/20">
+                    <h4 className="text-sm font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-3 flex items-center gap-2">
                       <Rocket className="w-4 h-4" /> The Result
                     </h4>
-                    <p className="text-emerald-900 font-medium leading-relaxed text-lg">{selectedProject.result}</p>
+                    <p className="text-emerald-900 dark:text-emerald-300 font-medium leading-relaxed text-lg">{selectedProject.result}</p>
                   </div>
                 </div>
                 
@@ -742,14 +796,14 @@ export default function App() {
                     <h4 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-4">Tech Stack & Tools</h4>
                     <div className="flex flex-wrap gap-2">
                       {selectedProject.tags.map((tag, idx) => (
-                        <span key={idx} className="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl text-sm font-bold border border-slate-200">
+                        <span key={idx} className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700">
                           {tag}
                         </span>
                       ))}
                     </div>
                   </div>
                   
-                  <div className="p-6 rounded-2xl bg-slate-900 text-white">
+                  <div className="p-6 rounded-2xl bg-slate-900 dark:bg-slate-800 text-white">
                     <h4 className="font-bold mb-2">Want a similar result?</h4>
                     <p className="text-slate-400 text-sm mb-4">Let's discuss how we can transform your digital presence.</p>
                     <a 
