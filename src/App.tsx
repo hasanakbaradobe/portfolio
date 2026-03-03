@@ -144,7 +144,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Code2 className="w-8 h-8 text-emerald-500" />
-          <span className="text-xl font-bold tracking-tight">DevCraft</span>
+          <span className="text-xl font-bold tracking-tight">Hasan Akber</span>
         </div>
         
         {/* Desktop Menu */}
@@ -592,17 +592,34 @@ export default function App() {
               Whether you need a custom WordPress developer or a full-scale business website development partner, I'm here to help you succeed.
             </p>
             
-            <div className="inline-flex flex-col md:flex-row items-center gap-6 p-2 bg-white/5 border border-white/10 rounded-3xl md:rounded-full">
-              <div className="flex items-center gap-4 px-8 py-4">
-                <Mail className="w-6 h-6 text-emerald-500" />
-                <span className="text-lg font-medium">hello@devcraft.com</span>
+            <div className="flex flex-col gap-6 items-center w-full">
+              <div className="inline-flex flex-col md:flex-row items-center gap-6 p-2 bg-white/5 border border-white/10 rounded-3xl md:rounded-full w-full max-w-2xl justify-between">
+                <div className="flex items-center gap-4 px-8 py-4">
+                  <Mail className="w-6 h-6 text-emerald-500 shrink-0" />
+                  <span className="text-lg font-medium break-all">hasanakbar.bd@gmail.com</span>
+                </div>
+                <a 
+                  href="mailto:hasanakbar.bd@gmail.com" 
+                  className="bg-emerald-500 text-white px-10 py-5 rounded-full text-lg font-bold hover:bg-emerald-600 transition-all shadow-xl shadow-emerald-500/20 whitespace-nowrap w-full md:w-auto text-center"
+                >
+                  Email Me
+                </a>
               </div>
-              <a 
-                href="mailto:hello@devcraft.com" 
-                className="bg-emerald-500 text-white px-10 py-5 rounded-full text-lg font-bold hover:bg-emerald-600 transition-all shadow-xl shadow-emerald-500/20"
-              >
-                Get a Free Quote
-              </a>
+
+              <div className="inline-flex flex-col md:flex-row items-center gap-6 p-2 bg-white/5 border border-white/10 rounded-3xl md:rounded-full w-full max-w-2xl justify-between">
+                <div className="flex items-center gap-4 px-8 py-4">
+                  <MessageSquare className="w-6 h-6 text-emerald-500 shrink-0" />
+                  <span className="text-lg font-medium">+880 1308-773827</span>
+                </div>
+                <a 
+                  href="https://wa.me/8801308773827" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-emerald-500 text-white px-10 py-5 rounded-full text-lg font-bold hover:bg-emerald-600 transition-all shadow-xl shadow-emerald-500/20 whitespace-nowrap w-full md:w-auto text-center"
+                >
+                  WhatsApp Me
+                </a>
+              </div>
             </div>
             
             <div className="mt-16 flex justify-center gap-8">
@@ -622,7 +639,7 @@ export default function App() {
       </section>
 
       <footer className="py-10 px-6 border-t border-slate-100 bg-white text-center text-sm text-slate-500">
-        <p>© {new Date().getFullYear()} DevCraft Portfolio. Built with React & Tailwind CSS.</p>
+        <p>© {new Date().getFullYear()} Hasan Akber. Built with React & Tailwind CSS.</p>
       </footer>
     </div>
   );
