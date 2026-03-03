@@ -659,9 +659,9 @@ export default function App() {
               <FadeIn
                 key={idx}
                 delay={idx * 0.1}
-                className="bg-white dark:bg-white p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-100 hover:shadow-xl transition-all group"
+                className="bg-white dark:bg-white p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-100 hover:shadow-xl transition-shadow duration-300 group"
               >
-                <div className="mb-6 p-3 bg-emerald-50 dark:bg-emerald-50 rounded-2xl inline-block group-hover:scale-110 transition-transform">
+                <div className="mb-6 p-3 bg-emerald-50 dark:bg-emerald-50 rounded-2xl inline-block group-hover:scale-110 transition-transform duration-300">
                   {service.icon}
                 </div>
                 <h3 className="text-xl font-bold mb-4 text-slate-900 dark:text-slate-900">{service.title}</h3>
