@@ -64,7 +64,7 @@ const PROJECTS: Project[] = [
     solution: "Designed and developed a high-converting landing page with clear messaging and optimized CTAs.",
     result: "Increased lead generation by 3x within the first 30 days of launch.",
     tags: ["React", "Tailwind CSS", "Conversion Optimization"],
-    image: "https://image.thum.io/get/width/1200/crop/675/https://websitedemos.net/saas-landing-page-04/"
+    image: "/images/project-1.jpg"
   },
   {
     title: "Brikly Construction",
@@ -73,7 +73,7 @@ const PROJECTS: Project[] = [
     solution: "Built a modern, responsive corporate website highlighting their projects and services.",
     result: "Improved brand perception and a 40% increase in online inquiries.",
     tags: ["WordPress", "Corporate", "UI/UX Design"],
-    image: "https://image.thum.io/get/width/1200/crop/675/https://websitedemos.net/brikly-construction-company-04/"
+    image: "/images/project-2.jpg"
   },
   {
     title: "Education Portal",
@@ -82,7 +82,7 @@ const PROJECTS: Project[] = [
     solution: "Developed a fast, user-friendly LMS frontend with intuitive course discovery.",
     result: "Student engagement increased by 50% and bounce rate dropped significantly.",
     tags: ["Next.js", "LMS", "Education"],
-    image: "https://image.thum.io/get/width/1200/crop/675/https://websitedemos.net/online-courses-02/"
+    image: "/images/project-3.jpg"
   },
   {
     title: "Libero X250 E-Commerce",
@@ -91,7 +91,7 @@ const PROJECTS: Project[] = [
     solution: "Created a visually striking product page with seamless checkout integration.",
     result: "Achieved $50k in sales during the first week of product launch.",
     tags: ["Shopify", "E-commerce", "Web Design"],
-    image: "https://image.thum.io/get/width/1200/crop/675/https://websitedemos.net/electric-scooter-04/"
+    image: "/images/project-4.jpg"
   }
 ];
 
@@ -127,13 +127,13 @@ const TESTIMONIALS: Testimonial[] = [
     name: "Sarah Jenkins",
     company: "CEO, Bloom Digital",
     feedback: "Working with this developer was a game-changer for our agency. The attention to detail and technical expertise in custom WordPress development is unmatched. Our client was thrilled with the result.",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=100&q=80"
+    image: "/images/testimonial-1.jpg"
   },
   {
     name: "Mark Thompson",
     company: "Founder, TechStream",
     feedback: "We needed a complex SaaS dashboard built quickly. Not only was it delivered on time, but the code quality was exceptional. A true professional who understands business goals as much as code.",
-    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=100&q=80"
+    image: "/images/testimonial-2.jpg"
   }
 ];
 
@@ -383,7 +383,7 @@ const FloatingIcons = () => {
   );
 };
 
-const FadeIn = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => (
+const FadeIn = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string, key?: React.Key }) => (
   <motion.div
     initial={{ opacity: 0, y: 30 }}
     whileInView={{ opacity: 1, y: 0 }}
