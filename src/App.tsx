@@ -30,6 +30,14 @@ import {
   Paintbrush
 } from 'lucide-react';
 
+// Import images
+import project1 from './assets/images/project-1.jpg';
+import project2 from './assets/images/project-2.jpg';
+import project3 from './assets/images/project-3.jpg';
+import project4 from './assets/images/project-4.jpg';
+import testimonial1 from './assets/images/testimonial-1.jpg';
+import testimonial2 from './assets/images/testimonial-2.jpg';
+
 // --- Types ---
 interface Project {
   title: string;
@@ -64,7 +72,7 @@ const PROJECTS: Project[] = [
     solution: "Designed and developed a high-converting landing page with clear messaging and optimized CTAs.",
     result: "Increased lead generation by 3x within the first 30 days of launch.",
     tags: ["React", "Tailwind CSS", "Conversion Optimization"],
-    image: "/images/project-1.jpg"
+    image: project1
   },
   {
     title: "Brikly Construction",
@@ -73,7 +81,7 @@ const PROJECTS: Project[] = [
     solution: "Built a modern, responsive corporate website highlighting their projects and services.",
     result: "Improved brand perception and a 40% increase in online inquiries.",
     tags: ["WordPress", "Corporate", "UI/UX Design"],
-    image: "/images/project-2.jpg"
+    image: project2
   },
   {
     title: "Education Portal",
@@ -82,7 +90,7 @@ const PROJECTS: Project[] = [
     solution: "Developed a fast, user-friendly LMS frontend with intuitive course discovery.",
     result: "Student engagement increased by 50% and bounce rate dropped significantly.",
     tags: ["Next.js", "LMS", "Education"],
-    image: "/images/project-3.jpg"
+    image: project3
   },
   {
     title: "Libero X250 E-Commerce",
@@ -91,7 +99,7 @@ const PROJECTS: Project[] = [
     solution: "Created a visually striking product page with seamless checkout integration.",
     result: "Achieved $50k in sales during the first week of product launch.",
     tags: ["Shopify", "E-commerce", "Web Design"],
-    image: "/images/project-4.jpg"
+    image: project4
   }
 ];
 
@@ -127,13 +135,13 @@ const TESTIMONIALS: Testimonial[] = [
     name: "Sarah Jenkins",
     company: "CEO, Bloom Digital",
     feedback: "Working with this developer was a game-changer for our agency. The attention to detail and technical expertise in custom WordPress development is unmatched. Our client was thrilled with the result.",
-    image: "/images/testimonial-1.jpg"
+    image: testimonial1
   },
   {
     name: "Mark Thompson",
     company: "Founder, TechStream",
     feedback: "We needed a complex SaaS dashboard built quickly. Not only was it delivered on time, but the code quality was exceptional. A true professional who understands business goals as much as code.",
-    image: "/images/testimonial-2.jpg"
+    image: testimonial2
   }
 ];
 
@@ -750,7 +758,6 @@ export default function App() {
                       src={project.image} 
                       alt={project.title} 
                       className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700"
-                      referrerPolicy="no-referrer"
                     />
                     <div className="absolute inset-0 bg-emerald-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <span className="bg-white dark:bg-slate-800 text-emerald-900 dark:text-emerald-400 px-6 py-3 rounded-full font-bold flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-all shadow-xl">
@@ -860,7 +867,6 @@ export default function App() {
                     src={testimonial.image} 
                     alt={testimonial.name} 
                     className="w-14 h-14 rounded-full object-cover border-2 border-white dark:border-slate-700 shadow-md"
-                    referrerPolicy="no-referrer"
                   />
                   <div>
                     <div className="font-bold text-slate-900 dark:text-white">{testimonial.name}</div>
@@ -945,7 +951,6 @@ export default function App() {
                   src={selectedProject.image} 
                   alt={selectedProject.title} 
                   className="w-full h-auto max-h-[60vh] object-contain" 
-                  referrerPolicy="no-referrer"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none" />
                 <button 
